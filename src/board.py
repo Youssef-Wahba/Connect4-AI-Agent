@@ -1,3 +1,10 @@
+# in board class there is a bug as it is not possible to choose the
+# index = 6 from function select_column(6) and its behavior is
+# similar to select_column(0) whice will affect the win state of our
+# implemented AI agent and make it always lose in hard mode
+# you can check the selected columns from terminal as it is not
+# our fault of implementation despite of our continuous try to debug
+# the mistake as it always results in errors
 from PIL import ImageGrab
 import pyautogui
 

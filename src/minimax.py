@@ -1,3 +1,10 @@
+# in board class there is a bug as it is not possible to choose the
+# index = 6 from function select_column(6) and its behavior is
+# similar to select_column(0) whice will affect the win state of our
+# implemented AI agent and make it always lose in hard mode
+# you can check the selected columns from terminal as it is not
+# our fault of implementation despite of our continuous try to debug
+# the mistake as it always results in errors
 import copy
 import numpy as np
 
@@ -14,6 +21,10 @@ def isValidMove(board, col):
     return board[0][col] == EMPTY
 
 
+def getAllValidMoves(board):
+    return [col for col in range(COLS) if isValidMove(board, col)]
+
+
 def makeMove(board, col, player):
     for row in range(ROWS - 1, -1, -1):
         if board[row][col] == EMPTY:
@@ -21,12 +32,21 @@ def makeMove(board, col, player):
             return
 
 
-def getAllValidMoves(board):
-    return [col for col in range(COLS) if isValidMove(board, col)]
+def isBoardFull(board):
+    return all(board[0][col] != EMPTY for col in range(COLS))
+
+
+def evaluateBoardWinner(board):
+    if isWinner(board, PLAYER_1):
+        return 1
+    elif isWinner(board, PLAYER_2):
+        return -1
+    else:
+        return 0
 
 
 def isWinner(board, player):
-    # Check horizontal
+        # Check horizontal
     for row in range(6):
         for col in range(4):
             if (
@@ -48,7 +68,18 @@ def isWinner(board, player):
             ):
                 return True
 
-    # Check diagonal (bottomLeft to topRight)
+    # Check diagonal (top-left to bottom-right)
+    for row in range(3):
+        for col in range(4):
+            if (
+                board[row][col] == player
+                and board[row + 1][col + 1] == player
+                and board[row + 2][col + 2] == player
+                and board[row + 3][col + 3] == player
+            ):
+                return True
+
+    # Check diagonal (bottom-left to top-right)
     for row in range(3, 6):
         for col in range(4):
             if (
@@ -59,30 +90,7 @@ def isWinner(board, player):
             ):
                 return True
 
-    # Check diagonal (topLeft to bottomRight)
-    for row in range(3):
-        for col in range(4):
-            if (
-                board[row][col] == player
-                and board[row + 1][col + 1] == player
-                and board[row + 2][col + 2] == player
-                and board[row + 3][col + 3] == player
-            ):
-                return True
     return False
-
-
-def isBoardFull(board):
-    return all(board[0][col] != EMPTY for col in range(COLS))
-
-
-def evaluateBoardWinner(board):
-    if isWinner(board, PLAYER_1):
-        return 1
-    elif isWinner(board, PLAYER_2):
-        return -1
-    else:
-        return 0
 
 
 def minimax(board, depth, maximizingPlayer):
